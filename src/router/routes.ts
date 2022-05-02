@@ -1,8 +1,6 @@
 import { Express } from 'express'
-import { Db } from 'mongodb'
-import { UserModel } from '../models/UserModel'
-import { RouterHelper } from './RouterHelper'
+import { UserRouter } from './UserRouter'
 
-export function composeRoutes(server: Express, db: Db) {
-    new RouterHelper<UserModel>('users', server, db)
+export function composeRoutes(server: Express) {
+    new UserRouter(server)
 }

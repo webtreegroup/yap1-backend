@@ -1,21 +1,17 @@
-import { MongoClient } from 'mongodb'
 import express = require('express')
 import { composeRoutes } from './router/routes'
 import { composeMiddlewares } from './middlewares/composer'
+import { DataBase } from './db'
 
 const port = 8000
-const url = 'mongodb://root:example@localhost:27017'
-const dbName = 'nodejsauth'
-const dbClient = new MongoClient(url)
-const db = dbClient.db(dbName)
 
 const server = express()
 
 composeMiddlewares(server)
-composeRoutes(server, db)
+composeRoutes(server)
 
 async function startApp() {
-    await dbClient.connect()
+    await DataBase.connect()
 
     console.log('Databse Connected successfully to server')
 }
