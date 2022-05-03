@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { ERROR_MESSAGES } from '../consts'
 import { UserService } from '../services/UserService'
 
 export class UserController {
@@ -6,9 +7,19 @@ export class UserController {
         const users = await UserService.getAll()
 
         if (!users) {
-            res.send({ error: 'An error has occurred' })
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.send(users)
+            res.status(200).json(users)
+        }
+    }
+
+    static async getByLogin(req: Request, res: Response) {
+        const user = await UserService.getById(req.params.id)
+
+        if (!user) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+        } else {
+            res.status(200).json(user)
         }
     }
 
@@ -16,9 +27,9 @@ export class UserController {
         const user = await UserService.getById(req.params.id)
 
         if (!user) {
-            res.send({ error: 'An error has occurred' })
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.send(user)
+            res.status(200).json(user)
         }
     }
 
@@ -26,9 +37,12 @@ export class UserController {
         const result = await UserService.deleteById(req.params.id)
 
         if (!result) {
-            res.send({ error: 'An error has occurred' })
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.send('Note ' + req.params.id + ' deleted!')
+            res.status(200).json({
+                message: 'Entity with id: ' + req.params.id + ' deleted!',
+                result,
+            })
         }
     }
 
@@ -36,9 +50,12 @@ export class UserController {
         const result = await UserService.updateById(req.params.id, req.body)
 
         if (!result) {
-            res.send({ error: 'An error has occurred' })
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.send(result)
+            res.status(200).json({
+                message: 'Entity with id: ' + req.params.id + ' updated!',
+                result,
+            })
         }
     }
 
@@ -46,9 +63,12 @@ export class UserController {
         const result = await UserService.create(req.body)
 
         if (!result) {
-            res.send({ error: 'An error has occurred' })
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.send(result)
+            res.status(200).json({
+                message: 'Entity created!',
+                result,
+            })
         }
     }
 }

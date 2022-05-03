@@ -13,6 +13,12 @@ export class UserService {
         return users.collection.findOne(details)
     }
 
+    static async getByLogin(login: string) {
+        const details = { login }
+
+        return users.collection.findOne(details)
+    }
+
     static async deleteById(id: string) {
         const details = { _id: new ObjectId(id) }
 

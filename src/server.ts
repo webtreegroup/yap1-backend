@@ -4,7 +4,6 @@ import { composeMiddlewares } from './middlewares/composer'
 import { DataBase } from './db'
 
 const port = 8000
-
 const server = express()
 
 composeMiddlewares(server)
