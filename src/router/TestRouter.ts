@@ -16,7 +16,7 @@ export class TestRouter {
             auth,
             (req: ReqWithTokenPayload, res) => {
                 return res.json({
-                    user: { id: req.userId, role: req.userPosition },
+                    user: { id: req.userId, role: req.userEmail },
                 })
             },
         )

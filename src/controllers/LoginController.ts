@@ -2,8 +2,9 @@ import { Request, Response } from 'express'
 import { ERROR_MESSAGES, SECRET_KEY } from '../consts'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../services/UserService'
-import { getPasswordHash, verifyPassword } from '../utils'
+import { getPasswordHash } from '../utils'
 import { validateSignUp } from '../validators/signUp.validator'
+import { verifyPassword } from '../validators/signIn.validator'
 
 export class LoginController {
     static async signIn(req: Request, res: Response) {

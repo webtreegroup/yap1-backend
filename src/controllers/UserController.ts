@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import { ERROR_MESSAGES } from '../consts'
+import { ReqWithTokenPayload } from '../middlewares/auth'
 import { UserService } from '../services/UserService'
+import { mapUser, mapUsers } from '../utils'
 
 export class UserController {
     static async getAll(_: Request, res: Response) {
@@ -9,17 +11,27 @@ export class UserController {
         if (!users) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(users)
+            res.status(200).json(mapUsers(users))
         }
     }
 
-    static async getByLogin(req: Request, res: Response) {
-        const user = await UserService.getById(req.params.id)
+    static async getCurrentUser(req: ReqWithTokenPayload, res: Response) {
+        const user = await UserService.getById(req.userId)
 
         if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(user)
+            res.status(200).json(mapUser(user))
+        }
+    }
+
+    static async getByLogin(req: Request, res: Response) {
+        const user = await UserService.getByLogin(req.params.login)
+
+        if (!user) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+        } else {
+            res.status(200).json(mapUser(user))
         }
     }
 
@@ -29,7 +41,7 @@ export class UserController {
         if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(user)
+            res.status(200).json(mapUser(user))
         }
     }
 

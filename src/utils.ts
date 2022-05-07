@@ -1,4 +1,6 @@
 import { randomBytes, scrypt } from 'crypto'
+import { WithId } from 'mongodb'
+import { UserModel } from './models/UserModel'
 
 export async function getPasswordHash(password: string) {
     return new Promise<string>((resolve, reject) => {
@@ -12,14 +14,17 @@ export async function getPasswordHash(password: string) {
     })
 }
 
-export async function verifyPassword(password: string, hash: string) {
-    return new Promise<boolean>((resolve, reject) => {
-        const [salt, key] = hash.split(':')
+export function mapUser(user: WithId<UserModel>) {
+    return {
+        id: user._id,
+        login: user.login,
+        firstName: user.firstName,
+        secondName: user.secondName,
+        email: user.email,
+        phone: user.phone,
+    }
+}
 
-        scrypt(password, salt, 64, (err, derivedKey) => {
-            if (err) reject(err)
-
-            resolve(key == derivedKey.toString('hex'))
-        })
-    })
+export function mapUsers(users: WithId<UserModel>[]) {
+    return users.map(mapUser)
 }

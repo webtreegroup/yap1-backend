@@ -4,7 +4,7 @@ import { ERROR_MESSAGES, SECRET_KEY } from '../consts'
 
 export interface ReqWithTokenPayload extends Request {
     userId: string
-    userPosition: string
+    userEmail: string
 }
 
 export function auth(
@@ -23,7 +23,7 @@ export function auth(
         const data = jwt.verify(token, SECRET_KEY) as jwt.JwtPayload
 
         req.userId = data.id
-        req.userPosition = data.role
+        req.userEmail = data.email
 
         return next()
     } catch {

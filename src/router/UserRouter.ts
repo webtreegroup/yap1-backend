@@ -15,6 +15,12 @@ export class UserRouter {
 
     private init() {
         this._server.get(
+            `/${this._route}/current`,
+            auth,
+            UserController.getCurrentUser,
+        )
+
+        this._server.get(
             `/${this._route}/:login`,
             auth,
             UserController.getByLogin,
