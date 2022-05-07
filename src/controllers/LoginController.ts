@@ -3,6 +3,7 @@ import { ERROR_MESSAGES, SECRET_KEY } from '../consts'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../services/UserService'
 import { getPasswordHash, verifyPassword } from '../utils'
+import { validateSignUp } from '../validators/signUp.validator'
 
 export class LoginController {
     static async signIn(req: Request, res: Response) {
@@ -20,7 +21,7 @@ export class LoginController {
         const token = jwt.sign(
             {
                 id: user._id,
-                position: user.position,
+                email: user.email,
             },
             SECRET_KEY,
         )
@@ -33,6 +34,12 @@ export class LoginController {
     }
 
     static async signUp(req: Request, res: Response) {
+        if (!validateSignUp(req.body)) {
+            return res
+                .status(400)
+                .json({ error: 'You need to fill in all the required fields!' })
+        }
+
         const user = await UserService.getByLogin(req.body.login)
 
         if (user) {
@@ -44,7 +51,7 @@ export class LoginController {
         const password = await getPasswordHash(req.body.password)
 
         const result = await UserService.create({
-            login: req.body.login,
+            ...req.body,
             password,
         })
 

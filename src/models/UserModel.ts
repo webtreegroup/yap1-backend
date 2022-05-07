@@ -1,5 +1,8 @@
 export interface UserModel {
     login: string
     password: string
-    position?: string
+    firstName?: string
+    secondName?: string
+    email?: string
+    phone?: string
 }

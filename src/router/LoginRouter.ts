@@ -12,10 +12,10 @@ export class LoginRouter {
     }
 
     private init() {
-        this._server.post(`/signin`, LoginController.signIn)
+        this._server.post(`/auth/signin`, LoginController.signIn)
 
-        this._server.post('/signup', LoginController.signUp)
+        this._server.post('/auth/signup', LoginController.signUp)
 
-        this._server.get('/logout', auth, LoginController.logout)
+        this._server.get('/auth/logout', auth, LoginController.logout)
     }
 }
