@@ -32,3 +32,5 @@ export class DataBase {
 DataBase.init()
 
 export const users = DataBase.addCollection<UserModel>('users')
+
+export const chats = DataBase.addCollection<UserModel>('chats')
