@@ -1,6 +1,6 @@
 import { randomBytes, scrypt } from 'crypto'
 import { WithId } from 'mongodb'
-import { UserModel } from './models/UserModel'
+import { UserModel } from './features/user/UserModel'
 
 export async function getPasswordHash(password: string) {
     return new Promise<string>((resolve, reject) => {

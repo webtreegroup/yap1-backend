@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import { ERROR_MESSAGES, SECRET_KEY } from '../consts'
+import { ERROR_MESSAGES, SECRET_KEY } from '../../consts'
 import * as jwt from 'jsonwebtoken'
-import { UserService } from '../services/UserService'
-import { getPasswordHash } from '../utils'
-import { validateSignUp } from '../validators/signUp.validator'
-import { verifyPassword } from '../validators/signIn.validator'
+import { UserService } from '../user/UserService'
+import { getPasswordHash } from '../../utils'
+import { validateSignUp } from '../../validators/signUp.validator'
+import { verifyPassword } from '../../validators/signIn.validator'
 
-export class LoginController {
+export class AuthController {
     static async signIn(req: Request, res: Response) {
         const user = await UserService.getByLogin(req.body.login)
 

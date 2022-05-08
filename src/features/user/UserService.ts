@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { users } from '../db'
-import { UserModel } from '../models/UserModel'
+import { users } from '../../db'
+import { UserModel } from './UserModel'
 
 export class UserService {
     static async getAll() {

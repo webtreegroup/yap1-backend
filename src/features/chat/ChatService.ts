@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { chats } from '../db'
-import { UserModel } from '../models/UserModel'
+import { chats } from '../../db'
+import { UserModel } from '../user/UserModel'
 
 export class ChatService {
     static async getAll() {

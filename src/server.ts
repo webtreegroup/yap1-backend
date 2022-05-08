@@ -1,5 +1,5 @@
 import express = require('express')
-import { composeRoutes } from './router/routes'
+import { composeRoutes } from './router'
 import { composeMiddlewares } from './middlewares/composer'
 import { DataBase } from './db'
 

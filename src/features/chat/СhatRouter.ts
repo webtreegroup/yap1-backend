@@ -1,7 +1,7 @@
 import { Express } from 'express'
-import { ChatController } from '../controllers/ChatController'
-import { chats } from '../db'
-import { auth } from '../middlewares/auth'
+import { ChatController } from './ChatController'
+import { chats } from '../../db'
+import { auth } from '../../middlewares/auth'
 
 export class СhatRouter {
     private _route = chats.key

@@ -1,5 +1,5 @@
 import { Collection, Db, MongoClient } from 'mongodb'
-import { UserModel } from './models/UserModel'
+import { UserModel } from './features/user/UserModel'
 
 export interface DataBaseCollection<T> {
     key: string

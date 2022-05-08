@@ -1,40 +1,52 @@
 import { Request, Response } from 'express'
-import { ERROR_MESSAGES } from '../consts'
-import { ChatService } from '../services/ChatService'
+import { ERROR_MESSAGES } from '../../consts'
+import { ReqWithTokenPayload } from '../../middlewares/auth'
+import { UserService } from './UserService'
+import { mapUser, mapUsers } from '../../utils'
 
-export class ChatController {
+export class UserController {
     static async getAll(_: Request, res: Response) {
-        const chats = await ChatService.getAll()
+        const users = await UserService.getAll()
 
-        if (!chats) {
+        if (!users) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(chats)
+            res.status(200).json(mapUsers(users))
         }
     }
 
-    static async getByChatName(req: Request, res: Response) {
-        const chat = await ChatService.getByChatName(req.params.login)
+    static async getCurrentUser(req: ReqWithTokenPayload, res: Response) {
+        const user = await UserService.getById(req.userId)
 
-        if (!chat) {
+        if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(chat)
+            res.status(200).json(mapUser(user))
+        }
+    }
+
+    static async getByLogin(req: Request, res: Response) {
+        const user = await UserService.getByLogin(req.params.login)
+
+        if (!user) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+        } else {
+            res.status(200).json(mapUser(user))
         }
     }
 
     static async getById(req: Request, res: Response) {
-        const chat = await ChatService.getById(req.params.id)
+        const user = await UserService.getById(req.params.id)
 
-        if (!chat) {
+        if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(chat)
+            res.status(200).json(mapUser(user))
         }
     }
 
     static async deleteById(req: Request, res: Response) {
-        const result = await ChatService.deleteById(req.params.id)
+        const result = await UserService.deleteById(req.params.id)
 
         if (!result) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
@@ -47,7 +59,7 @@ export class ChatController {
     }
 
     static async updateById(req: Request, res: Response) {
-        const result = await ChatService.updateById(req.params.id, req.body)
+        const result = await UserService.updateById(req.params.id, req.body)
 
         if (!result) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
@@ -60,7 +72,7 @@ export class ChatController {
     }
 
     static async create(req: Request, res: Response) {
-        const result = await ChatService.create(req.body)
+        const result = await UserService.create(req.body)
 
         if (!result) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })

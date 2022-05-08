@@ -1,7 +1,7 @@
 import { Express } from 'express'
-import { UserController } from '../controllers/UserController'
-import { users } from '../db'
-import { auth } from '../middlewares/auth'
+import { UserController } from './UserController'
+import { users } from '../../db'
+import { auth } from '../../middlewares/auth'
 
 export class UserRouter {
     private _route = users.key

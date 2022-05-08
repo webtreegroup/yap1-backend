@@ -1,5 +1,5 @@
 import { Express } from 'express'
-import { auth, ReqWithTokenPayload } from '../middlewares/auth'
+import { auth, ReqWithTokenPayload } from '../../middlewares/auth'
 
 export class TestRouter {
     private _server: Express
