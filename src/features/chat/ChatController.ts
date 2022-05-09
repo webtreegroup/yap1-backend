@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import { ERROR_MESSAGES } from '../../consts'
+import { ReqWithTokenPayload } from '../../middlewares/auth'
+import { ChatMapper } from './ChatMapper'
 import { ChatService } from './ChatService'
 
 export class ChatController {
@@ -9,7 +11,7 @@ export class ChatController {
         if (!chats) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(chats)
+            res.status(200).json(ChatMapper.mapChats(chats))
         }
     }
 
@@ -19,7 +21,7 @@ export class ChatController {
         if (!chat) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(chat)
+            res.status(200).json(ChatMapper.mapChat(chat))
         }
     }
 
@@ -29,7 +31,7 @@ export class ChatController {
         if (!chat) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(chat)
+            res.status(200).json(ChatMapper.mapChat(chat))
         }
     }
 
@@ -59,8 +61,11 @@ export class ChatController {
         }
     }
 
-    static async create(req: Request, res: Response) {
-        const result = await ChatService.create(req.body)
+    static async create(req: ReqWithTokenPayload, res: Response) {
+        const result = await ChatService.create({
+            name: req.body.name,
+            ownerId: req.userId,
+        })
 
         if (!result) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })

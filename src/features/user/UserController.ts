@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { ERROR_MESSAGES } from '../../consts'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
+import { UserMapper } from './UserMapper'
 import { UserService } from './UserService'
-import { mapUser, mapUsers } from '../../utils'
 
 export class UserController {
     static async getAll(_: Request, res: Response) {
@@ -11,7 +11,7 @@ export class UserController {
         if (!users) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(mapUsers(users))
+            res.status(200).json(UserMapper.mapUsers(users))
         }
     }
 
@@ -21,7 +21,7 @@ export class UserController {
         if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(mapUser(user))
+            res.status(200).json(UserMapper.mapUser(user))
         }
     }
 
@@ -31,7 +31,7 @@ export class UserController {
         if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(mapUser(user))
+            res.status(200).json(UserMapper.mapUser(user))
         }
     }
 
@@ -41,7 +41,7 @@ export class UserController {
         if (!user) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
-            res.status(200).json(mapUser(user))
+            res.status(200).json(UserMapper.mapUser(user))
         }
     }
 

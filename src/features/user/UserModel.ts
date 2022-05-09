@@ -6,3 +6,8 @@ export interface UserModel {
     email?: string
     phone?: string
 }
+
+export interface UserChatModel {
+    userId: string
+    chatId: string
+}

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { chats } from '../../db'
-import { UserModel } from '../user/UserModel'
+import { ChatModel } from './ChatModel'
 
 export class ChatService {
     static async getAll() {
@@ -25,13 +25,13 @@ export class ChatService {
         return chats.collection.deleteOne(details)
     }
 
-    static async updateById(id: string, body: UserModel) {
+    static async updateById(id: string, body: ChatModel) {
         const details = { _id: new ObjectId(id) }
 
         return chats.collection.updateOne(details, body)
     }
 
-    static async create(body: UserModel) {
+    static async create(body: ChatModel) {
         return chats.collection.insertOne(body)
     }
 }

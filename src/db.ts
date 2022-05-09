@@ -1,4 +1,5 @@
 import { Collection, Db, MongoClient } from 'mongodb'
+import { ChatModel } from './features/chat/ChatModel'
 import { UserModel } from './features/user/UserModel'
 
 export interface DataBaseCollection<T> {
@@ -33,4 +34,4 @@ DataBase.init()
 
 export const users = DataBase.addCollection<UserModel>('users')
 
-export const chats = DataBase.addCollection<UserModel>('chats')
+export const chats = DataBase.addCollection<ChatModel>('chats')
