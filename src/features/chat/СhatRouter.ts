@@ -30,6 +30,12 @@ export class СhatRouter {
 
         this._server.put(`/${this._route}/:id`, auth, ChatController.updateById)
 
+        this._server.get(
+            `/${this._route}/:id/users`,
+            auth,
+            ChatController.getChatUsers,
+        )
+
         this._server.get(`/${this._route}`, auth, ChatController.getAll)
 
         this._server.post(`/${this._route}`, auth, ChatController.create)

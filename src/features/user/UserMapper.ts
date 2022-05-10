@@ -1,8 +1,8 @@
 import { WithId } from 'mongodb'
-import { UserModel } from './UserModel'
+import { UserContract, UserModel } from './UserModel'
 
 export class UserMapper {
-    static mapUser(user: WithId<UserModel>) {
+    static mapUser(user: WithId<UserModel>): UserContract {
         return {
             id: user._id,
             login: user.login,

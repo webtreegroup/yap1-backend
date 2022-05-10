@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
+import { ObjectId } from 'mongodb'
 import { ERROR_MESSAGES } from '../../consts'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
+import { ChatUserMapper } from '../chatUser/ChatUserMapper'
+import { ChatUserService } from '../chatUser/ChatUserService'
 import { ChatMapper } from './ChatMapper'
 import { ChatService } from './ChatService'
 
@@ -61,6 +64,16 @@ export class ChatController {
         }
     }
 
+    static async getChatUsers(req: Request, res: Response) {
+        const chatUsers = await ChatUserService.getChatUsers(req.params.id)
+
+        if (!chatUsers) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+        } else {
+            res.status(200).json(ChatUserMapper.mapUsers(chatUsers))
+        }
+    }
+
     static async create(req: ReqWithTokenPayload, res: Response) {
         const result = await ChatService.create({
             name: req.body.name,
@@ -69,11 +82,24 @@ export class ChatController {
 
         if (!result) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
-        } else {
-            res.status(200).json({
-                message: 'Entity created!',
-                result,
-            })
+
+            return
         }
+
+        const addRelResult = await ChatUserService.addRelations({
+            userId: new ObjectId(req.userId),
+            chatId: result.insertedId,
+        })
+
+        if (!addRelResult) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+
+            return
+        }
+
+        res.status(200).json({
+            message: 'Entity created!',
+            result,
+        })
     }
 }
