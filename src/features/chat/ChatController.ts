@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
-import { ERROR_MESSAGES } from '../../consts'
+import { ERROR_MESSAGES } from '../../server.config'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
 import { ChatUserMapper } from '../chatUser/ChatUserMapper'
 import { ChatUserService } from '../chatUser/ChatUserService'
@@ -72,6 +72,12 @@ export class ChatController {
         } else {
             res.status(200).json(ChatUserMapper.mapUsers(chatUsers))
         }
+    }
+
+    static connectToChat(req: Request, res: Response) {
+        ChatService.connectToChat(req.params.userId, req.params.chatId)
+
+        res.sendStatus(200)
     }
 
     static async create(req: ReqWithTokenPayload, res: Response) {

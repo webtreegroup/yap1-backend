@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ERROR_MESSAGES } from '../../consts'
+import { ERROR_MESSAGES } from '../../server.config'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
 import { UserMapper } from './UserMapper'
 import { UserService } from './UserService'

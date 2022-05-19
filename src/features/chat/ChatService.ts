@@ -1,6 +1,8 @@
+import WebSocket = require('ws')
 import { ObjectId } from 'mongodb'
 import { chats } from '../../db'
 import { ChatModel } from './ChatModel'
+import { server } from '../../server'
 
 export class ChatService {
     static async getAll() {
@@ -33,5 +35,28 @@ export class ChatService {
 
     static async create(body: ChatModel) {
         return chats.collection.insertOne(body)
+    }
+
+    static connectToChat(userId: string, chatId: string) {
+        const ws = new WebSocket.Server({
+            server,
+            path: `/ws/${userId}/${chatId}`,
+        })
+
+        const clients = new Set<WebSocket.WebSocket>()
+
+        ws.on('connection', () => {
+            console.info('User connect to chat!')
+        })
+
+        ws.on('message', (message, isBinary) => {
+            clients.forEach((client) => {
+                client.send(message, { binary: isBinary })
+            })
+        })
+
+        ws.on('close', () => {
+            console.info('WS connection is closed!')
+        })
     }
 }

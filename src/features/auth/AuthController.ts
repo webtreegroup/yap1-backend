@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ERROR_MESSAGES, SECRET_KEY } from '../../consts'
+import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../../server.config'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../user/UserService'
 import { getPasswordHash } from '../../utils'
@@ -24,7 +24,7 @@ export class AuthController {
                 id: user._id,
                 email: user.email,
             },
-            SECRET_KEY,
+            AUTH_TOKEN_SECRET_KEY,
         )
 
         res.cookie('access_token', token, {

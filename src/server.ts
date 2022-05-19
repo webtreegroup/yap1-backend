@@ -1,13 +1,15 @@
 import express = require('express')
+import http = require('http')
 import { composeRoutes } from './router'
 import { composeMiddlewares } from './middlewares/composer'
 import { DataBase } from './db'
+import { SERVER_PORT } from './server.config'
 
-const port = 5000
-const server = express()
+const app = express()
+export const server = http.createServer(app)
 
-composeMiddlewares(server)
-composeRoutes(server)
+composeMiddlewares(app)
+composeRoutes(app)
 
 async function startApp() {
     await DataBase.connect()
@@ -17,8 +19,8 @@ async function startApp() {
 
 startApp()
     .then(() => {
-        server.listen(port, () => {
-            console.log('Server port is: ' + port!)
+        server.listen(SERVER_PORT, () => {
+            console.log(`Server port is: ${SERVER_PORT}!`)
         })
     })
     .catch(console.error)
