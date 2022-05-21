@@ -31,7 +31,7 @@ export class ChatService {
         return chats.collection.updateOne(details, body)
     }
 
-    static async create(body: ChatModel) {
+    static async createChat(body: ChatModel) {
         return chats.collection.insertOne(body)
     }
 }

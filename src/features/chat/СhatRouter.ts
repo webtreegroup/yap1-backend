@@ -17,7 +17,7 @@ export class СhatRouter {
         this._server.get(`/${this._route}/:id`, auth, ChatController.getById)
 
         this._server.get(
-            `/${this._route}/:chatName`,
+            `/${this._route}/:name`,
             auth,
             ChatController.getByChatName,
         )
@@ -38,6 +38,6 @@ export class СhatRouter {
 
         this._server.get(`/${this._route}`, auth, ChatController.getAll)
 
-        this._server.post(`/${this._route}`, auth, ChatController.create)
+        this._server.post(`/${this._route}`, auth, ChatController.createChat)
     }
 }

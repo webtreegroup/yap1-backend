@@ -19,7 +19,7 @@ export class ChatController {
     }
 
     static async getByChatName(req: Request, res: Response) {
-        const chat = await ChatService.getByChatName(req.params.login)
+        const chat = await ChatService.getByChatName(req.params.name)
 
         if (!chat) {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
@@ -74,8 +74,16 @@ export class ChatController {
         }
     }
 
-    static async create(req: ReqWithTokenPayload, res: Response) {
-        const result = await ChatService.create({
+    static async createChat(req: ReqWithTokenPayload, res: Response) {
+        const chat = await ChatService.getByChatName(req.body.name)
+
+        if (chat) {
+            res.status(400).json({ message: ERROR_MESSAGES[400] })
+
+            return
+        }
+
+        const result = await ChatService.createChat({
             name: req.body.name,
             ownerId: req.userId,
         })
