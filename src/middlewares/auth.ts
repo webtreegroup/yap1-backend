@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import * as jwt from 'jsonwebtoken'
 import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../server.config'
+import { validateToken } from '../utils'
 
 export interface ReqWithTokenPayload extends Request {
     userId: string
@@ -12,30 +12,16 @@ export function auth(
     res: Response,
     next: NextFunction,
 ) {
-    const closeConnection = () => {
-        res.status(403).json({
-            message: ERROR_MESSAGES[403],
-        })
-    }
-
-    const token = req.cookies.access_token
-
-    if (!token) {
-        closeConnection()
-
-        return
-    }
-
     try {
-        const data = jwt.verify(token, AUTH_TOKEN_SECRET_KEY) as jwt.JwtPayload
+        const data = validateToken(req.cookies.access_token)
 
         req.userId = data.id
         req.userEmail = data.email
 
         return next()
     } catch {
-        closeConnection()
-
-        return
+        res.status(401).json({
+            message: ERROR_MESSAGES[401],
+        })
     }
 }

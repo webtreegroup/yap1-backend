@@ -16,7 +16,7 @@ export class AuthController {
         )
 
         if (!isPasswordValid) {
-            return res.status(403).json({ message: ERROR_MESSAGES[403] })
+            return res.status(401).json({ message: ERROR_MESSAGES[401] })
         }
 
         const token = jwt.sign(

@@ -31,12 +31,6 @@ export class СhatRouter {
         this._server.put(`/${this._route}/:id`, auth, ChatController.updateById)
 
         this._server.get(
-            `/${this._route}/connect/:userId/:chatId`,
-            auth,
-            ChatController.connectToChat,
-        )
-
-        this._server.get(
             `/${this._route}/:id/users`,
             auth,
             ChatController.getChatUsers,

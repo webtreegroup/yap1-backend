@@ -74,12 +74,6 @@ export class ChatController {
         }
     }
 
-    static connectToChat(req: Request, res: Response) {
-        ChatService.connectToChat(req.params.userId, req.params.chatId)
-
-        res.sendStatus(200)
-    }
-
     static async create(req: ReqWithTokenPayload, res: Response) {
         const result = await ChatService.create({
             name: req.body.name,
