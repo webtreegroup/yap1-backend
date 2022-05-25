@@ -21,12 +21,16 @@ export class UserRouter {
         )
 
         this._server.get(
-            `/${this._route}/:login`,
+            `/${this._route}/by-login/:login`,
             auth,
             UserController.getByLogin,
         )
 
-        this._server.get(`/${this._route}/:id`, auth, UserController.getById)
+        this._server.get(
+            `/${this._route}/by-id/:id`,
+            auth,
+            UserController.getById,
+        )
 
         this._server.delete(
             `/${this._route}/:id`,
