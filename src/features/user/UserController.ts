@@ -3,6 +3,8 @@ import { ERROR_MESSAGES } from '../../server.config'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
 import { UserMapper } from './UserMapper'
 import { UserService } from './UserService'
+import { ChatUserService } from '../chatUser/ChatUserService'
+import { ChatsUsersMapper } from '../chatUser/ChatUserMapper'
 
 export class UserController {
     static async getAll(_: Request, res: Response) {
@@ -32,6 +34,16 @@ export class UserController {
             res.status(500).json({ message: ERROR_MESSAGES[500] })
         } else {
             res.status(200).json(UserMapper.mapUser(user))
+        }
+    }
+
+    static async getUserChats(req: Request, res: Response) {
+        const userChats = await ChatUserService.getUserChats(req.params.id)
+
+        if (!userChats) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+        } else {
+            res.status(200).json(ChatsUsersMapper.mapChats(userChats))
         }
     }
 

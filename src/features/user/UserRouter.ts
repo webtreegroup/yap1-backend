@@ -38,6 +38,12 @@ export class UserRouter {
             UserController.deleteById,
         )
 
+        this._server.get(
+            `/${this._route}/:id/chats`,
+            auth,
+            UserController.getUserChats,
+        )
+
         this._server.put(`/${this._route}/:id`, auth, UserController.updateById)
 
         this._server.get(`/${this._route}`, auth, UserController.getAll)

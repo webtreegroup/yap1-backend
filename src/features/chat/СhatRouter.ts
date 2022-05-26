@@ -14,10 +14,14 @@ export class СhatRouter {
     }
 
     private init() {
-        this._server.get(`/${this._route}/:id`, auth, ChatController.getById)
+        this._server.get(
+            `/${this._route}/by-id/:id`,
+            auth,
+            ChatController.getById,
+        )
 
         this._server.get(
-            `/${this._route}/:name`,
+            `/${this._route}/by-name/:name`,
             auth,
             ChatController.getByChatName,
         )

@@ -1,14 +1,14 @@
 import { ObjectId } from 'mongodb'
-import { chats, chatsUsers } from '../../db'
-import { ChatUserDto, ChatUserModel } from './ChatUserModel'
+import { chats, chatsUsers, users } from '../../db'
+import { ChatUsersDto, ChatUserModel, UserChatsDto } from './ChatUserModel'
 
 export class ChatUserService {
-    static async getChatUsers(id: string) {
+    static async getChatUsers(chatId: string) {
         return chats.collection
-            .aggregate<ChatUserDto>([
+            .aggregate<ChatUsersDto>([
                 {
                     $match: {
-                        _id: new ObjectId(id),
+                        _id: new ObjectId(chatId),
                     },
                 },
                 {
@@ -16,15 +16,43 @@ export class ChatUserService {
                         from: 'chatsUsers',
                         localField: '_id',
                         foreignField: 'chatId',
-                        as: 'chatsUsers',
+                        as: 'chatUsers',
                     },
                 },
                 {
                     $lookup: {
                         from: 'users',
-                        localField: 'chatsUsers.userId',
+                        localField: 'chatUsers.userId',
                         foreignField: '_id',
                         as: 'users',
+                    },
+                },
+            ])
+            .toArray()
+    }
+
+    static async getUserChats(userId: string) {
+        return users.collection
+            .aggregate<UserChatsDto>([
+                {
+                    $match: {
+                        _id: new ObjectId(userId),
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'chatsUsers',
+                        localField: '_id',
+                        foreignField: 'userId',
+                        as: 'userChats',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'chats',
+                        localField: 'userChats.chatId',
+                        foreignField: '_id',
+                        as: 'chats',
                     },
                 },
             ])
