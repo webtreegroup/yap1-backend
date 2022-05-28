@@ -27,7 +27,7 @@ export class СhatRouter {
         )
 
         this._server.delete(
-            `/${this._route}/:id`,
+            `/${this._route}/by-id/:id`,
             auth,
             ChatController.deleteById,
         )
@@ -43,5 +43,11 @@ export class СhatRouter {
         this._server.get(`/${this._route}`, auth, ChatController.getAll)
 
         this._server.post(`/${this._route}`, auth, ChatController.createChat)
+
+        this._server.delete(
+            `/${this._route}/by-name`,
+            auth,
+            ChatController.deleteByName,
+        )
     }
 }

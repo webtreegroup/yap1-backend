@@ -51,6 +51,35 @@ export class ChatController {
         }
     }
 
+    static async deleteByName(req: ReqWithTokenPayload, res: Response) {
+        const chatDto = await ChatService.getByChatName(req.body.name)
+
+        const deleteResult = await ChatService.deleteById(
+            chatDto._id.toString(),
+        )
+
+        if (!deleteResult) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+
+            return
+        }
+
+        const deleteRelResult = await ChatUserService.deleteChatRelations(
+            chatDto._id.toString(),
+        )
+
+        if (!deleteRelResult) {
+            res.status(500).json({ message: ERROR_MESSAGES[500] })
+
+            return
+        }
+
+        res.status(200).json({
+            message: 'Entity deleted!',
+            deleteResult,
+        })
+    }
+
     static async updateById(req: Request, res: Response) {
         const result = await ChatService.updateById(req.params.id, req.body)
 

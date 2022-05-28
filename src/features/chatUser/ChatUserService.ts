@@ -62,4 +62,10 @@ export class ChatUserService {
     static async addRelations(body: ChatUserModel) {
         return chatsUsers.collection.insertOne(body)
     }
+
+    static async deleteChatRelations(chatId: string) {
+        const details = { _id: new ObjectId(chatId) }
+
+        return chatsUsers.collection.deleteMany(details)
+    }
 }
