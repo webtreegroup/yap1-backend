@@ -3,11 +3,20 @@ import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../../server.config'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../user/UserService'
 import { getPasswordHash } from '../../utils'
-import { validateSignUp } from '../../validators/signUp.validator'
-import { verifyPassword } from '../../validators/signIn.validator'
+import { validateRequiredFields, verifyPassword } from './AuthValidators'
+import { SignInContract, SignUpContract } from './AuthModel'
 
 export class AuthController {
-    static async signIn(req: Request, res: Response) {
+    static async signIn(req: Request<SignInContract>, res: Response) {
+        const validateResult = validateRequiredFields(req.body, [
+            'password',
+            'login',
+        ])
+
+        if (!validateResult.state) {
+            return res.status(400).json({ fields: validateResult.fields })
+        }
+
         const user = await UserService.getByLogin(req.body.login)
 
         const isPasswordValid = await verifyPassword(
@@ -34,11 +43,22 @@ export class AuthController {
             .json({ message: 'Sign in successfully!' })
     }
 
-    static async signUp(req: Request, res: Response) {
-        if (!validateSignUp(req.body)) {
-            return res
-                .status(400)
-                .json({ error: 'You need to fill in all the required fields!' })
+    static async signUp(req: Request<SignUpContract>, res: Response) {
+        const validateResult = validateRequiredFields(req.body, [
+            'firstName',
+            'secondName',
+            'login',
+            'email',
+            'phone',
+            'password',
+        ])
+
+        if (!validateResult.state) {
+            return res.status(400).json({ fields: validateResult.fields })
+        }
+
+        if (req.body.password !== req.body.passwordConfirm) {
+            return res.status(400).json({ fields: validateResult.fields })
         }
 
         const user = await UserService.getByLogin(req.body.login)
