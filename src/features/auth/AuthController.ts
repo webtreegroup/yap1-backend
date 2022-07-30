@@ -3,7 +3,12 @@ import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../../server.config'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../user/UserService'
 import { getPasswordHash } from '../../utils'
-import { validateRequiredFields, verifyPassword } from './AuthValidators'
+import {
+    getValidationMessage,
+    validateRequiredFields,
+    VALIDATION_MESSAGES,
+    verifyPassword,
+} from './AuthValidators'
 import { SignInContract, SignUpContract } from './AuthModel'
 
 export class AuthController {
@@ -54,11 +59,15 @@ export class AuthController {
         ])
 
         if (!validateResult.state) {
-            return res.status(400).json({ fields: validateResult.fields })
+            return res
+                .status(400)
+                .json({ message: getValidationMessage(validateResult.fields) })
         }
 
         if (req.body.password !== req.body.passwordConfirm) {
-            return res.status(400).json({ fields: validateResult.fields })
+            return res
+                .status(400)
+                .json({ message: getValidationMessage(validateResult.fields) })
         }
 
         const user = await UserService.getByLogin(req.body.login)
@@ -66,7 +75,7 @@ export class AuthController {
         if (user) {
             return res
                 .status(400)
-                .json({ error: 'The same user exists already!' })
+                .json({ message: VALIDATION_MESSAGES.USER_EXISTS })
         }
 
         const password = await getPasswordHash(req.body.password)
