@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../server.config'
+import { MESSAGES } from '../core/validation'
 import { validateToken } from '../utils'
 
 export interface ReqWithTokenPayload extends Request {
@@ -20,8 +20,8 @@ export function auth(
 
         return next()
     } catch {
-        res.status(401).json({
-            message: ERROR_MESSAGES[401],
-        })
+        res.statusMessage = MESSAGES.NOT_AUTH
+
+        res.status(401)
     }
 }

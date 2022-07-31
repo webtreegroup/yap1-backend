@@ -16,9 +16,21 @@ const FIELDS_DICTIONARY: StoreType<string> = {
     name: 'название',
 }
 
-export const VALIDATION_MESSAGES = {
-    FAILED: 'Заполните обязательные поля',
+export const MESSAGES = {
+    NOT_AUTH: 'Вы не авторизованы',
+    FILL_REQUIRED_FIELDS: 'Заполните обязательные поля',
+    PASSWORD_IS_NOT_IDENTICAL: 'Пароли не совпадают',
+    PASSWORD_INCORRECT: 'Пароль не верный',
+    CHAT_DOES_NOT_EXIST: 'Чат не найден',
+    CHAT_ADDED_SUCCESSFULLY: 'Чат успешно добавлен',
+    CHAT_DELETED_SUCCESSFULLY: 'Чат успешно удален',
+    CHAT_UPDATED_SUCCESSFULLY: 'Чат успешно обновлен',
+    USER_DOES_NOT_EXIST: 'Пользователь не найден',
     USER_EXISTS: 'Пользователь с таким логином уже зарегистрирован',
+    USER_ADDED_SUCCESSFULLY: 'Пользователь успешно добавлен',
+    USER_SIGNUP_SUCCESSFULLY: 'Пользователь успешно зарегистриован',
+    USER_DELETED_SUCCESSFULLY: 'Пользователь успешно удален',
+    USER_UPDATED_SUCCESSFULLY: 'Пользователь успешно обновлен',
     ALREADY_EXIST: 'Запись уже существует',
     SERVER_ERROR: 'Ошибка сервера',
 }
@@ -53,7 +65,7 @@ export async function verifyPassword(password: string, hash: string) {
 }
 
 export function getValidationMessage(result: string[]): string {
-    return `${VALIDATION_MESSAGES.FAILED}: ${result
+    return `${MESSAGES.FILL_REQUIRED_FIELDS}: ${result
         ?.map((el) => FIELDS_DICTIONARY[el])
         .join(', ')}.`
 }

@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
-import { ERROR_MESSAGES } from '../../server.config'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
 import { UserMapper } from './UserMapper'
 import { UserService } from './UserService'
 import { ChatUserService } from '../chatUser/ChatUserService'
 import { ChatsUsersMapper } from '../chatUser/ChatUserMapper'
+import { MESSAGES } from '../../core/validation'
 
 export class UserController {
     static async getAll(_: Request, res: Response) {
         const users = await UserService.getAll()
 
         if (!users) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(200).send([])
         } else {
-            res.status(200).json(UserMapper.mapUsers(users))
+            res.status(200).send(UserMapper.mapUsers(users))
         }
     }
 
@@ -21,9 +21,11 @@ export class UserController {
         const user = await UserService.getById(req.userId)
 
         if (!user) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.statusMessage = MESSAGES.USER_DOES_NOT_EXIST
+
+            res.status(404)
         } else {
-            res.status(200).json(UserMapper.mapUser(user))
+            res.status(200).send(UserMapper.mapUser(user))
         }
     }
 
@@ -31,19 +33,13 @@ export class UserController {
         const user = await UserService.getByLogin(req.params.login)
 
         if (!user) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
-        } else {
-            res.status(200).json(UserMapper.mapUser(user))
-        }
-    }
+            res.statusMessage = MESSAGES.USER_DOES_NOT_EXIST
 
-    static async getUserChats(req: Request, res: Response) {
-        const userChats = await ChatUserService.getUserChats(req.params.id)
-
-        if (!userChats) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(404)
         } else {
-            res.status(200).json(ChatsUsersMapper.mapChats(userChats))
+            res.statusMessage = MESSAGES.USER_ADDED_SUCCESSFULLY
+
+            res.status(200).send(UserMapper.mapUser(user))
         }
     }
 
@@ -51,9 +47,11 @@ export class UserController {
         const user = await UserService.getById(req.params.id)
 
         if (!user) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.statusMessage = MESSAGES.USER_DOES_NOT_EXIST
+
+            res.status(404)
         } else {
-            res.status(200).json(UserMapper.mapUser(user))
+            res.status(200).send(UserMapper.mapUser(user))
         }
     }
 
@@ -61,12 +59,13 @@ export class UserController {
         const result = await UserService.deleteById(req.params.id)
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.statusMessage = MESSAGES.SERVER_ERROR
+
+            res.status(500)
         } else {
-            res.status(200).json({
-                message: 'Entity with id: ' + req.params.id + ' deleted!',
-                result,
-            })
+            res.statusMessage = MESSAGES.USER_DELETED_SUCCESSFULLY
+
+            res.status(200)
         }
     }
 
@@ -74,12 +73,13 @@ export class UserController {
         const result = await UserService.updateById(req.params.id, req.body)
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.statusMessage = MESSAGES.SERVER_ERROR
+
+            res.status(500)
         } else {
-            res.status(200).json({
-                message: 'Entity with id: ' + req.params.id + ' updated!',
-                result,
-            })
+            res.statusMessage = MESSAGES.USER_UPDATED_SUCCESSFULLY
+
+            res.status(200)
         }
     }
 
@@ -87,12 +87,23 @@ export class UserController {
         const result = await UserService.create(req.body)
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.statusMessage = MESSAGES.SERVER_ERROR
+
+            res.status(500)
         } else {
-            res.status(200).json({
-                message: 'Entity created!',
-                result,
-            })
+            res.statusMessage = MESSAGES.USER_ADDED_SUCCESSFULLY
+
+            res.status(200)
+        }
+    }
+
+    static async getUserChats(req: Request, res: Response) {
+        const userChats = await ChatUserService.getUserChats(req.params.id)
+
+        if (!userChats) {
+            res.status(200).send([])
+        } else {
+            res.status(200).send(ChatsUsersMapper.mapChats(userChats))
         }
     }
 }

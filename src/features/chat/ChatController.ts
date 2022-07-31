@@ -8,7 +8,7 @@ import { ChatService } from './ChatService'
 import {
     getValidationMessage,
     validateRequiredFields,
-    VALIDATION_MESSAGES,
+    MESSAGES,
 } from '../../core/validation'
 
 export class ChatController {
@@ -16,9 +16,9 @@ export class ChatController {
         const chats = await ChatService.getAll()
 
         if (!chats) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.status(200).send([])
         } else {
-            res.status(200).json(ChatMapper.mapChats(chats))
+            res.status(200).send(ChatMapper.mapChats(chats))
         }
     }
 
@@ -26,9 +26,11 @@ export class ChatController {
         const chat = await ChatService.getByChatName(req.params.name)
 
         if (!chat) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.CHAT_DOES_NOT_EXIST
+
+            res.status(404)
         } else {
-            res.status(200).json(ChatMapper.mapChat(chat))
+            res.status(200).send(ChatMapper.mapChat(chat))
         }
     }
 
@@ -36,9 +38,11 @@ export class ChatController {
         const chat = await ChatService.getById(req.params.id)
 
         if (!chat) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.CHAT_DOES_NOT_EXIST
+
+            res.status(404)
         } else {
-            res.status(200).json(ChatMapper.mapChat(chat))
+            res.status(200).send(ChatMapper.mapChat(chat))
         }
     }
 
@@ -46,16 +50,25 @@ export class ChatController {
         const result = await ChatService.deleteById(req.params.id)
 
         if (!result) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.SERVER_ERROR
+
+            res.status(404)
         } else {
-            res.status(200).json({
-                message: 'Entity with id: ' + req.params.id + ' deleted!',
-                result,
-            })
+            res.statusMessage = MESSAGES.CHAT_DELETED_SUCCESSFULLY
+
+            res.status(200)
         }
     }
 
     static async deleteByName(req: ReqWithTokenPayload, res: Response) {
+        const validateResult = validateRequiredFields(req.body, ['name'])
+
+        if (!validateResult.state) {
+            res.statusMessage = getValidationMessage(validateResult.fields)
+
+            return res.status(400)
+        }
+
         const chatDto = await ChatService.getByChatName(req.body.name)
 
         const deleteResult = await ChatService.deleteById(
@@ -63,9 +76,9 @@ export class ChatController {
         )
 
         if (!deleteResult) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return
+            return res.status(500)
         }
 
         const deleteRelResult = await ChatUserService.deleteChatRelations(
@@ -73,27 +86,27 @@ export class ChatController {
         )
 
         if (!deleteRelResult) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return
+            return res.status(500)
         }
 
-        res.status(200).json({
-            message: 'Entity deleted!',
-            deleteResult,
-        })
+        res.statusMessage = MESSAGES.CHAT_DELETED_SUCCESSFULLY
+
+        res.status(200)
     }
 
     static async updateById(req: Request, res: Response) {
         const result = await ChatService.updateById(req.params.id, req.body)
 
         if (!result) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.SERVER_ERROR
+
+            res.status(500)
         } else {
-            res.status(200).json({
-                message: 'Entity with id: ' + req.params.id + ' updated!',
-                result,
-            })
+            res.statusMessage = MESSAGES.CHAT_UPDATED_SUCCESSFULLY
+
+            res.status(200)
         }
     }
 
@@ -101,9 +114,9 @@ export class ChatController {
         const chatUsers = await ChatUserService.getChatUsers(req.params.id)
 
         if (!chatUsers) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.status(200).send([])
         } else {
-            res.status(200).json(ChatsUsersMapper.mapUsers(chatUsers))
+            res.status(200).send(ChatsUsersMapper.mapUsers(chatUsers))
         }
     }
 
@@ -111,17 +124,17 @@ export class ChatController {
         const validateResult = validateRequiredFields(req.body, ['name'])
 
         if (!validateResult.state) {
-            return res
-                .status(400)
-                .json({ message: getValidationMessage(validateResult.fields) })
+            res.statusMessage = getValidationMessage(validateResult.fields)
+
+            return res.status(400)
         }
 
         const chat = await ChatService.getByChatName(req.body.name)
 
         if (chat) {
-            res.status(400).json({ message: VALIDATION_MESSAGES.ALREADY_EXIST })
+            res.statusMessage = MESSAGES.ALREADY_EXIST
 
-            return
+            return res.status(400)
         }
 
         const result = await ChatService.createChat({
@@ -130,9 +143,9 @@ export class ChatController {
         })
 
         if (!result) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return
+            return res.status(500)
         }
 
         const addRelResult = await ChatUserService.addRelations({
@@ -141,14 +154,13 @@ export class ChatController {
         })
 
         if (!addRelResult) {
-            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
+            res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return
+            return res.status(500)
         }
 
-        res.status(200).json({
-            message: 'Entity created!',
-            result,
-        })
+        res.statusMessage = MESSAGES.CHAT_ADDED_SUCCESSFULLY
+
+        res.status(200)
     }
 }

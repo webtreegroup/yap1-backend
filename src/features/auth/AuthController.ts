@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../../server.config'
+import { AUTH_TOKEN_SECRET_KEY } from '../../server.config'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../user/UserService'
 import { getPasswordHash } from '../../utils'
@@ -8,7 +8,7 @@ import { SignInContract, SignUpContract } from './AuthModel'
 import {
     getValidationMessage,
     validateRequiredFields,
-    VALIDATION_MESSAGES,
+    MESSAGES,
 } from '../../core/validation'
 
 export class AuthController {
@@ -19,7 +19,9 @@ export class AuthController {
         ])
 
         if (!validateResult.state) {
-            return res.status(400).json({ fields: validateResult.fields })
+            res.statusMessage = getValidationMessage(validateResult.fields)
+
+            return res.status(400)
         }
 
         const user = await UserService.getByLogin(req.body.login)
@@ -30,7 +32,9 @@ export class AuthController {
         )
 
         if (!isPasswordValid) {
-            return res.status(401).json({ message: ERROR_MESSAGES[401] })
+            res.statusMessage = MESSAGES.PASSWORD_INCORRECT
+
+            return res.status(401)
         }
 
         const token = jwt.sign(
@@ -43,9 +47,7 @@ export class AuthController {
 
         res.cookie('access_token', token, {
             httpOnly: true,
-        })
-            .status(200)
-            .json({ message: 'Sign in successfully!' })
+        }).status(200)
     }
 
     static async signUp(req: Request<SignUpContract>, res: Response) {
@@ -59,23 +61,23 @@ export class AuthController {
         ])
 
         if (!validateResult.state) {
-            return res
-                .status(400)
-                .json({ message: getValidationMessage(validateResult.fields) })
+            res.statusMessage = getValidationMessage(validateResult.fields)
+
+            return res.status(400)
         }
 
         if (req.body.password !== req.body.passwordConfirm) {
-            return res
-                .status(400)
-                .json({ message: getValidationMessage(validateResult.fields) })
+            res.statusMessage = MESSAGES.PASSWORD_IS_NOT_IDENTICAL
+
+            return res.status(400)
         }
 
         const user = await UserService.getByLogin(req.body.login)
 
         if (user) {
-            return res
-                .status(400)
-                .json({ message: VALIDATION_MESSAGES.USER_EXISTS })
+            res.statusMessage = MESSAGES.USER_EXISTS
+
+            return res.status(400)
         }
 
         const password = await getPasswordHash(req.body.password)
@@ -86,19 +88,17 @@ export class AuthController {
         })
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.statusMessage = MESSAGES.SERVER_ERROR
+
+            res.status(500)
         } else {
-            res.status(200).json({
-                message: 'Sign up successfully!',
-                result,
-            })
+            res.statusMessage = MESSAGES.USER_SIGNUP_SUCCESSFULLY
+
+            res.status(200)
         }
     }
 
     static logout(_: Request, res: Response) {
-        return res
-            .clearCookie('access_token')
-            .status(200)
-            .json({ message: 'Logged out successfully!' })
+        return res.clearCookie('access_token').status(200)
     }
 }
