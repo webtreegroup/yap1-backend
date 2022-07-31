@@ -1,18 +1,22 @@
 import { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
-import { ERROR_MESSAGES } from '../../server.config'
 import { ReqWithTokenPayload } from '../../middlewares/auth'
 import { ChatsUsersMapper } from '../chatUser/ChatUserMapper'
 import { ChatUserService } from '../chatUser/ChatUserService'
 import { ChatMapper } from './ChatMapper'
 import { ChatService } from './ChatService'
+import {
+    getValidationMessage,
+    validateRequiredFields,
+    VALIDATION_MESSAGES,
+} from '../../core/validation'
 
 export class ChatController {
     static async getAll(_: Request, res: Response) {
         const chats = await ChatService.getAll()
 
         if (!chats) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
         } else {
             res.status(200).json(ChatMapper.mapChats(chats))
         }
@@ -22,7 +26,7 @@ export class ChatController {
         const chat = await ChatService.getByChatName(req.params.name)
 
         if (!chat) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
         } else {
             res.status(200).json(ChatMapper.mapChat(chat))
         }
@@ -32,7 +36,7 @@ export class ChatController {
         const chat = await ChatService.getById(req.params.id)
 
         if (!chat) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
         } else {
             res.status(200).json(ChatMapper.mapChat(chat))
         }
@@ -42,7 +46,7 @@ export class ChatController {
         const result = await ChatService.deleteById(req.params.id)
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
         } else {
             res.status(200).json({
                 message: 'Entity with id: ' + req.params.id + ' deleted!',
@@ -59,7 +63,7 @@ export class ChatController {
         )
 
         if (!deleteResult) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
 
             return
         }
@@ -69,7 +73,7 @@ export class ChatController {
         )
 
         if (!deleteRelResult) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
 
             return
         }
@@ -84,7 +88,7 @@ export class ChatController {
         const result = await ChatService.updateById(req.params.id, req.body)
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
         } else {
             res.status(200).json({
                 message: 'Entity with id: ' + req.params.id + ' updated!',
@@ -97,17 +101,25 @@ export class ChatController {
         const chatUsers = await ChatUserService.getChatUsers(req.params.id)
 
         if (!chatUsers) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
         } else {
             res.status(200).json(ChatsUsersMapper.mapUsers(chatUsers))
         }
     }
 
     static async createChat(req: ReqWithTokenPayload, res: Response) {
+        const validateResult = validateRequiredFields(req.body, ['name'])
+
+        if (!validateResult.state) {
+            return res
+                .status(400)
+                .json({ message: getValidationMessage(validateResult.fields) })
+        }
+
         const chat = await ChatService.getByChatName(req.body.name)
 
         if (chat) {
-            res.status(400).json({ message: ERROR_MESSAGES[400] })
+            res.status(400).json({ message: VALIDATION_MESSAGES.ALREADY_EXIST })
 
             return
         }
@@ -118,7 +130,7 @@ export class ChatController {
         })
 
         if (!result) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
 
             return
         }
@@ -129,7 +141,7 @@ export class ChatController {
         })
 
         if (!addRelResult) {
-            res.status(500).json({ message: ERROR_MESSAGES[500] })
+            res.status(500).json({ message: VALIDATION_MESSAGES.SERVER_ERROR })
 
             return
         }

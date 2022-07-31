@@ -3,13 +3,13 @@ import { ERROR_MESSAGES, AUTH_TOKEN_SECRET_KEY } from '../../server.config'
 import * as jwt from 'jsonwebtoken'
 import { UserService } from '../user/UserService'
 import { getPasswordHash } from '../../utils'
+import { verifyPassword } from './AuthValidators'
+import { SignInContract, SignUpContract } from './AuthModel'
 import {
     getValidationMessage,
     validateRequiredFields,
     VALIDATION_MESSAGES,
-    verifyPassword,
-} from './AuthValidators'
-import { SignInContract, SignUpContract } from './AuthModel'
+} from '../../core/validation'
 
 export class AuthController {
     static async signIn(req: Request<SignInContract>, res: Response) {
