@@ -51,7 +51,9 @@ export class AuthController {
 
         res.cookie('access_token', token, {
             httpOnly: true,
-        }).status(200)
+        })
+            .status(200)
+            .send()
     }
 
     static async signUp(req: Request<SignUpContract>, res: Response) {
@@ -109,6 +111,6 @@ export class AuthController {
     }
 
     static logout(_: Request, res: Response) {
-        return res.clearCookie('access_token').status(200)
+        return res.clearCookie('access_token').status(200).send()
     }
 }
