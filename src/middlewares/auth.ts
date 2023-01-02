@@ -22,6 +22,6 @@ export function auth(
     } catch {
         res.statusMessage = MESSAGES.NOT_AUTH
 
-        res.status(401)
+        res.status(401).send()
     }
 }

@@ -23,7 +23,7 @@ export class UserController {
         if (!user) {
             res.statusMessage = MESSAGES.USER_DOES_NOT_EXIST
 
-            res.status(404)
+            res.status(404).send()
         } else {
             res.status(200).send(UserMapper.mapUser(user))
         }
@@ -33,11 +33,11 @@ export class UserController {
         const user = await UserService.getByLogin(req.params.login)
 
         if (!user) {
-            res.statusMessage = MESSAGES.USER_DOES_NOT_EXIST
+            res.statusMessage = 'Пользователь не найден'
 
-            res.status(404)
+            res.status(404).send()
         } else {
-            res.statusMessage = MESSAGES.USER_ADDED_SUCCESSFULLY
+            res.statusMessage = 'Пользователь успешно добавлен'
 
             res.status(200).send(UserMapper.mapUser(user))
         }
@@ -49,7 +49,7 @@ export class UserController {
         if (!user) {
             res.statusMessage = MESSAGES.USER_DOES_NOT_EXIST
 
-            res.status(404)
+            res.status(404).send()
         } else {
             res.status(200).send(UserMapper.mapUser(user))
         }
@@ -61,11 +61,11 @@ export class UserController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            res.status(500)
+            res.status(500).send()
         } else {
             res.statusMessage = MESSAGES.USER_DELETED_SUCCESSFULLY
 
-            res.status(200)
+            res.status(200).send()
         }
     }
 
@@ -75,11 +75,11 @@ export class UserController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            res.status(500)
+            res.status(500).send()
         } else {
             res.statusMessage = MESSAGES.USER_UPDATED_SUCCESSFULLY
 
-            res.status(200)
+            res.status(200).send()
         }
     }
 
@@ -89,11 +89,11 @@ export class UserController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            res.status(500)
+            res.status(500).send()
         } else {
             res.statusMessage = MESSAGES.USER_ADDED_SUCCESSFULLY
 
-            res.status(200)
+            res.status(200).send()
         }
     }
 

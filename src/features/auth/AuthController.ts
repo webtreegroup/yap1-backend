@@ -21,7 +21,9 @@ export class AuthController {
         if (!validateResult.state) {
             res.statusMessage = getValidationMessage(validateResult.fields)
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         const user = await UserService.getByLogin(req.body.login)
@@ -34,7 +36,9 @@ export class AuthController {
         if (!isPasswordValid) {
             res.statusMessage = MESSAGES.PASSWORD_INCORRECT
 
-            return res.status(401)
+            res.status(401).send()
+
+            return
         }
 
         const token = jwt.sign(
@@ -63,13 +67,17 @@ export class AuthController {
         if (!validateResult.state) {
             res.statusMessage = getValidationMessage(validateResult.fields)
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         if (req.body.password !== req.body.passwordConfirm) {
             res.statusMessage = MESSAGES.PASSWORD_IS_NOT_IDENTICAL
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         const user = await UserService.getByLogin(req.body.login)
@@ -77,7 +85,9 @@ export class AuthController {
         if (user) {
             res.statusMessage = MESSAGES.USER_EXISTS
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         const password = await getPasswordHash(req.body.password)
@@ -90,11 +100,11 @@ export class AuthController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            res.status(500)
+            res.status(500).send()
         } else {
             res.statusMessage = MESSAGES.USER_SIGNUP_SUCCESSFULLY
 
-            res.status(200)
+            res.status(200).send()
         }
     }
 

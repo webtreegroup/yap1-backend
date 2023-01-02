@@ -28,7 +28,7 @@ export class ChatController {
         if (!chat) {
             res.statusMessage = MESSAGES.CHAT_DOES_NOT_EXIST
 
-            res.status(404)
+            res.status(404).send()
         } else {
             res.status(200).send(ChatMapper.mapChat(chat))
         }
@@ -40,7 +40,7 @@ export class ChatController {
         if (!chat) {
             res.statusMessage = MESSAGES.CHAT_DOES_NOT_EXIST
 
-            res.status(404)
+            res.status(404).send()
         } else {
             res.status(200).send(ChatMapper.mapChat(chat))
         }
@@ -52,11 +52,11 @@ export class ChatController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            res.status(404)
+            res.status(404).send()
         } else {
             res.statusMessage = MESSAGES.CHAT_DELETED_SUCCESSFULLY
 
-            res.status(200)
+            res.status(200).send()
         }
     }
 
@@ -66,7 +66,9 @@ export class ChatController {
         if (!validateResult.state) {
             res.statusMessage = getValidationMessage(validateResult.fields)
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         const chatDto = await ChatService.getByChatName(req.body.name)
@@ -78,7 +80,9 @@ export class ChatController {
         if (!deleteResult) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return res.status(500)
+            res.status(500).send()
+
+            return
         }
 
         const deleteRelResult = await ChatUserService.deleteChatRelations(
@@ -88,12 +92,14 @@ export class ChatController {
         if (!deleteRelResult) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return res.status(500)
+            res.status(500).send()
+
+            return
         }
 
         res.statusMessage = MESSAGES.CHAT_DELETED_SUCCESSFULLY
 
-        res.status(200)
+        res.status(200).send()
     }
 
     static async updateById(req: Request, res: Response) {
@@ -102,11 +108,11 @@ export class ChatController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            res.status(500)
+            res.status(500).send()
         } else {
             res.statusMessage = MESSAGES.CHAT_UPDATED_SUCCESSFULLY
 
-            res.status(200)
+            res.status(200).send()
         }
     }
 
@@ -126,7 +132,9 @@ export class ChatController {
         if (!validateResult.state) {
             res.statusMessage = getValidationMessage(validateResult.fields)
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         const chat = await ChatService.getByChatName(req.body.name)
@@ -134,7 +142,9 @@ export class ChatController {
         if (chat) {
             res.statusMessage = MESSAGES.ALREADY_EXIST
 
-            return res.status(400)
+            res.status(400).send()
+
+            return
         }
 
         const result = await ChatService.createChat({
@@ -145,7 +155,9 @@ export class ChatController {
         if (!result) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return res.status(500)
+            res.status(500).send()
+
+            return
         }
 
         const addRelResult = await ChatUserService.addRelations({
@@ -156,11 +168,13 @@ export class ChatController {
         if (!addRelResult) {
             res.statusMessage = MESSAGES.SERVER_ERROR
 
-            return res.status(500)
+            res.status(500).send()
+
+            return
         }
 
         res.statusMessage = MESSAGES.CHAT_ADDED_SUCCESSFULLY
 
-        res.status(200)
+        res.status(200).send()
     }
 }
